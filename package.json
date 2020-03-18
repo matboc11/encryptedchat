@@ -1,0 +1,14 @@
+{
+    "name": "encryptedchat",
+    "description": "",
+    "version": "0.0.1",
+    "scripts": {
+        "client": "node client.js",
+        "server": "node server.js"
+    },
+    "dependencies": {
+        "socket.io": "^2.3.0",
+        "socket.io-client": "^2.3.0",
+        "terminal-kit": "^1.35.1"
+    }
+}
