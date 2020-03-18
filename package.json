@@ -4,7 +4,8 @@
     "version": "0.0.1",
     "scripts": {
         "client": "node client.js",
-        "server": "node server.js"
+        "server": "node server.js",
+        "keygen": "openssl genrsa -des3 -out private.pem 2048 && openssl rsa -in private.pem -outform PEM -pubout -out public.pem"
     },
     "dependencies": {
         "socket.io": "^2.3.0",

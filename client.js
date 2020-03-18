@@ -2,18 +2,25 @@ const io = require('socket.io-client');
 const terminal = require('terminal-kit').terminal;
 const socket = io.connect('http://localhost:8080', { reconnect: true });
 
+const crypto = require('crypto');
+
 let messages = [];
 let name = '';
 let connected = false;
 let inputAbort = null;
+let serverPublicKey = '';
 
-socket.on('connect', () => { connected = true; });
+socket.on('connect', () => { });
 socket.on('chat-message', details => receiveMessage(details['name'], details['message']));
+socket.on('public-key', pubk => { 
+    serverPublicKey = pubk;
+    connected = true;
+ });
 
 terminal.on('key', function(name , matches , data) 
 {
     if (name === 'CTRL_C') 
-    { 
+    {
         terminal.grabInput(false); 
         setTimeout(function() { process.exit() } , 100); 
     }
@@ -49,7 +56,8 @@ async function init()
 function sendMessage(user, message)
 {
     messages.push({ name: user, message: message });
-    socket.emit('send-chat-message', message);
+
+    socket.emit('send-chat-message', crypto.publicEncrypt(serverPublicKey, Buffer.from(message)).toString('base64'));
     refreshTerminal();
 }
 
