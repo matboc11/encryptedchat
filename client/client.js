@@ -10,14 +10,14 @@ let connected = false;
 let inputAbort = null;
 let serverPublicKey = '';
 
-socket.on('connect', () => { });
 socket.on('chat-message', details => receiveMessage(details['name'], details['message']));
 socket.on('public-key', pubk => { 
     serverPublicKey = pubk;
     connected = true;
  });
+socket.on('user-connected', name => receiveMessage('SYSTEM', 'User ' + name + ' has connected') );
 
-terminal.on('key', function(name , matches , data) 
+terminal.on('key', function(name, _, _) 
 {
     if (name === 'CTRL_C') 
     {
@@ -31,7 +31,6 @@ function refreshTerminal()
     terminal.clear();
     if (inputAbort) inputAbort.abort();
 
-
     for (let i = messages.length - terminal.height + 1; i < messages.length; i++)
     {
         if (i >= 0) terminal(messages[i].name + ': ' + messages[i].message);
@@ -39,7 +38,7 @@ function refreshTerminal()
     }
 
     terminal('Write a message: ');
-    inputAbort = terminal.inputField({}, (err, msg) => sendMessage(name, msg));
+    inputAbort = terminal.inputField({}, (_, msg) => sendMessage(name, msg));
 }
 
 async function init()
@@ -49,7 +48,7 @@ async function init()
     terminal.clear();
     terminal('Connecting ...');
     while (!connected);
-    socket.emit('new-user', name);
+    socket.emit('new-user', { name, publicKey: '' });
     refreshTerminal();
 }
 

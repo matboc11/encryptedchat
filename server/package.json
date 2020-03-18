@@ -3,10 +3,11 @@
     "description": "",
     "version": "0.0.1",
     "scripts": {
-        "start": "node server.js",
+        "start": "node -r esm server.js",
         "keygen": "openssl genrsa -des3 -out private.pem 2048 && openssl rsa -in private.pem -outform PEM -pubout -out public.pem"
     },
     "dependencies": {
+        "esm": "^3.2.25",
         "socket.io": "^2.3.0"
     }
 }
