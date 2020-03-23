@@ -1,7 +1,6 @@
 const io = require('socket.io-client');
 const terminal = require('terminal-kit').terminal;
 const socket = io.connect('http://localhost:8080', { reconnect: true });
-
 const crypto = require('crypto');
 
 let messages = [];
@@ -10,7 +9,7 @@ let connected = false;
 let inputAbort = null;
 let serverPublicKey = '';
 
-socket.on('chat-message', details => receiveMessage(details['name'], details['message']));
+socket.on('receive-message', details => receiveMessage(details['name'], details['message']));
 socket.on('public-key', pubk => { 
     serverPublicKey = pubk;
     connected = true;

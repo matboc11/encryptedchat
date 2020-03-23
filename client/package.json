@@ -3,11 +3,13 @@
     "description": "",
     "version": "0.0.1",
     "scripts": {
-        "start": "node -r esm client.js"
+        "start": "ts-node client.ts"
     },
     "dependencies": {
-        "esm": "^3.2.25",
+        "@types/node": "^13.9.2",
         "socket.io-client": "^2.3.0",
-        "terminal-kit": "^1.35.1"
+        "terminal-kit": "^1.35.1",
+        "ts-node": "^8.7.0",
+        "typescript": "^3.8.3"
     }
 }
