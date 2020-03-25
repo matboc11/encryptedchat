@@ -1,6 +1,5 @@
 const io = require('socket.io')(8080);
 const fs = require('fs');
-import { RsaPublicKey, RsaPrivateKey } from 'crypto';
 
 import { encrypt, decrypt } from '../common/rsa';
 import { User } from './util/user';
@@ -8,8 +7,8 @@ import { NewUserMsg, PublicKeyMsg, ReceiveMessageMsg, SendMessageMsg } from './u
 
 let users: User[] = [];
 
-const publicKey: RsaPublicKey = fs.readFileSync('public.pem', 'utf8');
-const privateKey: RsaPrivateKey = fs.readFileSync('private.pem', 'utf8');
+const publicKey: string = fs.readFileSync('public.pem', 'utf8');
+const privateKey: string = fs.readFileSync('private.pem', 'utf8');
 
 io.on('connection', socket => 
 {
@@ -33,10 +32,9 @@ io.on('connection', socket =>
 
         for (const user of users)
         {
-            if (user.socketId === socket.id) continue;
             const receiveMessageMsg: ReceiveMessageMsg = { 
                 name: sender.name, 
-                message: encrypt(publicKey, decryptedMessage)
+                message: encrypt(sender.publicKey, decryptedMessage)
             };
             io.to(`${user.socketId}`).emit('receive-message', receiveMessageMsg);
         }
@@ -46,11 +44,10 @@ io.on('connection', socket =>
 
     socket.on('disconnect', () => 
     {
-        const sender = users.find((e) => e.socketId === socket.id);
-        if (!sender) return;
-        io.emit('user-disconnected', sender.name);
-        
-        // delete users[socket.id];
-        // TODO: Delete disconnected user
+        const senderIdx = users.findIndex((e) => e.socketId === socket.id);
+        if (!users[senderIdx]) return;
+        io.emit('user-disconnected', users[senderIdx].name);
+        console.log('User disconnected: ' + users[senderIdx].name);
+        users.splice(senderIdx, 1);
     });
 });
